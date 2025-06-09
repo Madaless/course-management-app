@@ -5,12 +5,14 @@ import com.course.courseapp.dto.CourseResponseDTO;
 import com.course.courseapp.service.CourseService;
 import com.course.courseapp.util.CourseApiResponse;
 import com.course.courseapp.util.CourseResponseMessages;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -26,11 +28,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Tag(name = "Courses", description = "Course Management APIs")
 @RequestMapping("/api/v1/courses")
+@SecurityRequirement(name = "BearerAuth")
 @RestController
 @AllArgsConstructor
 public class CourseController {
     private CourseService courseService;
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Create a new course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course created successfully"),
@@ -43,6 +47,7 @@ public class CourseController {
                 .body(CourseApiResponse.success(CourseResponseMessages.CREATED, created, HttpStatus.CREATED.value()));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update an existing course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course updated successfully"),
@@ -54,6 +59,7 @@ public class CourseController {
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.UPDATED, updated, HttpStatus.OK.value()));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Publish a course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course published successfully"),
@@ -65,6 +71,7 @@ public class CourseController {
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.PUBLISHED, published, HttpStatus.OK.value()));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Archive a course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course archived successfully"),
@@ -77,6 +84,7 @@ public class CourseController {
 
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get all published courses within a date range")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Courses retrieved successfully")
@@ -90,6 +98,7 @@ public class CourseController {
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.PUBLISHED_IN_RANGE, courses, HttpStatus.OK.value()));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get the average duration of all courses")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Average duration calculated")
@@ -100,6 +109,7 @@ public class CourseController {
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.AVERAGE_DURATION, average, HttpStatus.OK.value()));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Duplicate an existing course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course duplicated successfully"),
@@ -111,6 +121,7 @@ public class CourseController {
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.DUPLICATED, duplicated, HttpStatus.OK.value()));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get all courses that are not published")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Courses not published retrieved")
