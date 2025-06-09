@@ -120,4 +120,20 @@ public class CourseServiceImpl implements CourseService {
         copy.setStatus(CourseStatus.DRAFT);
         return courseMapper.toDTO(repo.save(copy));
     }
+
+    @Override
+    public List<CourseResponseDTO> getAllCoursesFilteredByStatus(List<CourseStatus> statusList) {
+        log.info("Retrieving all courses with optional status filter: {}", statusList);
+
+        List<Course> courses;
+
+        if (statusList == null || statusList.isEmpty()) {
+            courses = repo.findAll();
+        } else {
+            courses = repo.findByStatusIn(statusList);
+        }
+
+        return courseMapper.toDTOList(courses);
+    }
+
 }

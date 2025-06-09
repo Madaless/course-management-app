@@ -2,6 +2,7 @@ package com.course.courseapp.service;
 
 import com.course.courseapp.dto.CourseRequestDTO;
 import com.course.courseapp.dto.CourseResponseDTO;
+import com.course.courseapp.entity.CourseStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,5 +19,5 @@ public interface CourseService {
     List<CourseResponseDTO> getPublishedWithinRange(LocalDateTime start, LocalDateTime end);
     CourseResponseDTO duplicateCourse(UUID id);
     List<CourseResponseDTO> getCoursesNotPublished();
-
+    List<CourseResponseDTO> getAllCoursesFilteredByStatus(List<CourseStatus> statusList);
 }

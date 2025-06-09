@@ -2,6 +2,7 @@ package com.course.courseapp.controller;
 
 import com.course.courseapp.dto.CourseRequestDTO;
 import com.course.courseapp.dto.CourseResponseDTO;
+import com.course.courseapp.entity.CourseStatus;
 import com.course.courseapp.service.CourseService;
 import com.course.courseapp.util.CourseApiResponse;
 import com.course.courseapp.util.CourseResponseMessages;
@@ -131,4 +132,20 @@ public class CourseController {
         List<CourseResponseDTO> courses = courseService.getCoursesNotPublished();
         return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.NOT_PUBLISHED, courses, HttpStatus.OK.value()));
     }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Get all courses with optional status filter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filtered courses retrieved successfully")
+    })
+    @GetMapping
+    public ResponseEntity<CourseApiResponse<List<CourseResponseDTO>>> getAllCourses(
+            @RequestParam(value = "status", required = false) List<CourseStatus> statusList
+    ) {
+        List<CourseResponseDTO> courses = courseService.getAllCoursesFilteredByStatus(statusList);
+        return ResponseEntity.ok(
+                CourseApiResponse.success("Courses retrieved successfully", courses, HttpStatus.OK.value())
+        );
+    }
+
 }
