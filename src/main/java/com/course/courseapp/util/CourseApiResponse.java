@@ -1,13 +1,16 @@
 package com.course.courseapp.util;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class CourseApiResponse<T> {
-    private boolean success;
-    private String message;
-    private T data;
-    private LocalDateTime timestamp;
-    private int code;
+    private final boolean success;
+    private final String message;
+    private final T data;
+    private final LocalDateTime timestamp;
+    private final int code;
 
     public CourseApiResponse(boolean success, String message, T data, int code) {
         this.success = success;
@@ -17,10 +20,6 @@ public class CourseApiResponse<T> {
         this.timestamp = LocalDateTime.now();
     }
 
-    public static <T> CourseApiResponse<T> of(boolean success, String message, T data, int code) {
-        return new CourseApiResponse<>(success, message, data, code);
-    }
-
     public static <T> CourseApiResponse<T> success(String message, T data, int code) {
         return new CourseApiResponse<>(true, message, data, code);
     }
@@ -28,10 +27,4 @@ public class CourseApiResponse<T> {
     public static <T> CourseApiResponse<T> fail(String message, int code) {
         return new CourseApiResponse<>(false, message, null, code);
     }
-
-    public boolean isSuccess() { return success; }
-    public String getMessage() { return message; }
-    public T getData() { return data; }
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public int getCode() { return code; }
 }

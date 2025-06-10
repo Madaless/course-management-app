@@ -9,6 +9,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -44,8 +46,17 @@ public class JwtUtil {
     }
 
     public List<String> getRolesFromToken(String token) {
-        return getClaimsFromToken(token).get("roles", List.class);
-    }
+        Object rolesObj = getClaimsFromToken(token).get("roles");
+        if (rolesObj instanceof List<?> rawList) {
+            List<String> roles = new ArrayList<>();
+            for (Object role : rawList) {
+                if (role instanceof String) {
+                    roles.add((String) role);
+                }
+            }
+            return roles;
+        }
+        return Collections.emptyList();    }
 
     public boolean isTokenValid(String token) {
         try {

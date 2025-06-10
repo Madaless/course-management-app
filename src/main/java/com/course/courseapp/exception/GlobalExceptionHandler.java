@@ -42,16 +42,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<CourseApiResponse<String>> handleAllUncaught(Exception ex) {
-        log.error("Unexpected error", ex);
-
-        CourseApiResponse<String> response =
-                new CourseApiResponse<>(false, "An unexpected error occurred. Please try again later.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<CourseApiResponse<String>> handleEntityNotFound(EntityNotFoundException ex) {
         log.warn("Entity not found: {}", ex.getMessage());
@@ -60,6 +50,26 @@ public class GlobalExceptionHandler {
                 new CourseApiResponse<>(false, ex.getMessage(), null, HttpStatus.NOT_FOUND.value());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<CourseApiResponse<String>> handleUserNotFoundException(UserNotFoundException ex) {
+        log.warn("User not found: {}", ex.getMessage());
+
+        CourseApiResponse<String> response =
+                CourseApiResponse.fail(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CourseApiResponse<String>> handleAllUncaught(Exception ex) {
+        log.error("Unexpected error", ex);
+
+        CourseApiResponse<String> response =
+                new CourseApiResponse<>(false, "An unexpected error occurred. Please try again later.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
 }

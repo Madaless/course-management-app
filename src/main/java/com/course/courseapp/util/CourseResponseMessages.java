@@ -14,4 +14,5 @@ public final class CourseResponseMessages {
     public static final String AVERAGE_DURATION = "Average duration retrieved";
     public static final String PUBLISHED_IN_RANGE = "Published courses retrieved";
     public static final String NOT_PUBLISHED = "Draft courses retrieved";
+    public static final String INVALID_CRED = "Invalid credentials";
 }
