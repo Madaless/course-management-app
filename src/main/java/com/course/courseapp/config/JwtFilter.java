@@ -35,7 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 String token = header.substring(7);
 
-                // ✅ Validate and parse token
                 if (!jwtUtil.isTokenValid(token)) {
                     throw new RuntimeException("Invalid or expired token");
                 }
@@ -43,12 +42,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 String email = jwtUtil.getEmailFromToken(token);
                 List<String> roles = jwtUtil.getRolesFromToken(token);
 
-                // ✅ Convert roles to GrantedAuthority
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                         .toList();
 
-                // ✅ Set Authentication in context
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(email, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -58,7 +55,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 

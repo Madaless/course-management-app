@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1")
 public class AuthController {
-
     @Value("${app.user.email}")
     private String configuredEmail;
 
@@ -37,19 +36,17 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<CourseApiResponse<AuthResponse>> login(@RequestBody AuthRequest request) {
         AppUser user = appUserRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + request.email()));
-
 
         if (passwordEncoder.matches(request.password(), user.getPassword())) {
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
             AuthResponse authResponse = new AuthResponse(token);
             return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.UPDATED, authResponse, HttpStatus.OK.value()));
         } else {
-            return ResponseEntity.ok(CourseApiResponse.fail(CourseResponseMessages.INVALID_CRED, HttpStatus.UNAUTHORIZED.value()));
+            return ResponseEntity.ok(CourseApiResponse.fail(CourseResponseMessages.LOGGED_IN, HttpStatus.UNAUTHORIZED.value()));
         }
     }
 
