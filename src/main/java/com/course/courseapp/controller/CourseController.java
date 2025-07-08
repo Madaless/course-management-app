@@ -3,6 +3,7 @@ package com.course.courseapp.controller;
 import com.course.courseapp.dto.CourseRequestDTO;
 import com.course.courseapp.dto.CourseResponseDTO;
 import com.course.courseapp.entity.CourseStatus;
+import com.course.courseapp.service.AiService;
 import com.course.courseapp.service.CourseService;
 import com.course.courseapp.util.CourseApiResponse;
 import com.course.courseapp.util.CourseResponseMessages;
@@ -12,11 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -28,10 +31,12 @@ import java.util.UUID;
 @Tag(name = "Courses", description = "Course Management APIs")
 @RequestMapping("/api/v1/courses")
 @SecurityRequirement(name = "BearerAuth")
+@Validated
 @RestController
 @AllArgsConstructor
 public class CourseController {
     private CourseService courseService;
+    private AiService aiService;
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Create a new course")
@@ -144,6 +149,19 @@ public class CourseController {
         return ResponseEntity.ok(
                 CourseApiResponse.success("Courses retrieved successfully", courses, HttpStatus.OK.value())
         );
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Generate a course description based on the title using AI")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Course description generated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input or title missing"),
+            @ApiResponse(responseCode = "500", description = "AI generation failed")
+    })
+    @PostMapping("/ai/description")
+    public ResponseEntity<CourseApiResponse<String>> generateDescription(@RequestParam @NotNull String title) {
+        String result = aiService.generateDescription(title);
+        return ResponseEntity.ok(CourseApiResponse.success("Generated description", result, 200));
     }
 
 }

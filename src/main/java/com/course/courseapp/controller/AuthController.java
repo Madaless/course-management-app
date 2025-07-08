@@ -44,9 +44,9 @@ public class AuthController {
         if (passwordEncoder.matches(request.password(), user.getPassword())) {
             String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
             AuthResponse authResponse = new AuthResponse(token);
-            return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.UPDATED, authResponse, HttpStatus.OK.value()));
+            return ResponseEntity.ok(CourseApiResponse.success(CourseResponseMessages.LOGGED_IN, authResponse, HttpStatus.OK.value()));
         } else {
-            return ResponseEntity.ok(CourseApiResponse.fail(CourseResponseMessages.LOGGED_IN, HttpStatus.UNAUTHORIZED.value()));
+            return ResponseEntity.ok(CourseApiResponse.fail(CourseResponseMessages.INVALID_CRED, HttpStatus.UNAUTHORIZED.value()));
         }
     }
 
